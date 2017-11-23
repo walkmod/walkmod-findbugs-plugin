@@ -1,5 +1,8 @@
 package org.walkmod.findbugs.transformations;
 
+import org.walkmod.javalang.ast.Comment;
+import org.walkmod.javalang.ast.CompilationUnit;
+import org.walkmod.javalang.ast.LineComment;
 import org.walkmod.javalang.ast.body.ClassOrInterfaceDeclaration;
 import org.walkmod.javalang.ast.body.MethodDeclaration;
 import org.walkmod.javalang.ast.body.ModifierSet;
@@ -15,6 +18,7 @@ import org.walkmod.walkers.VisitorContext;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
     final private ArrayList<Parameter> parameters = new ArrayList<>();
@@ -43,7 +47,11 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
         }
 
         for (Statement entry : this.doNotModifyStatements) {
-            System.out.println("@TODO: Do not modify parameters! " + entry);
+            CompilationUnit cu = NodeUtils.getAncestorOfType(entry, CompilationUnit.class);
+            List<Comment> comments = cu.getComments();
+            int beginLine = entry.getBeginLine();
+            comments.add(new LineComment(beginLine, 0, beginLine, 0, " @TODO: Do not modify parameters!"));
+            cu.setComments(comments);
         }
     }
 
