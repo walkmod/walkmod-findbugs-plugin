@@ -22,13 +22,13 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
     final private HashSet<String> modifiedLocals = new HashSet<>();
 
     @Override
-    public void visit(ClassOrInterfaceDeclaration n, VisitorContext arg) {
+    public void visit(final ClassOrInterfaceDeclaration n, final VisitorContext arg) {
         processingClass = n.getSymbolName();
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(MethodDeclaration n, VisitorContext arg) {
+    public void visit(final MethodDeclaration n, final VisitorContext arg) {
         parameters.clear();
         modifiedLocals.clear();
 
@@ -49,13 +49,13 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
     }
 
     @Override
-    public void visit(Parameter param, VisitorContext arg) {
+    public void visit(final Parameter param, final VisitorContext arg) {
         super.visit(param, arg);
         parameters.add(param);
     }
 
     @Override
-    public void visit(AssignExpr n, VisitorContext arg) {
+    public void visit(final AssignExpr n, final VisitorContext arg) {
         super.visit(n, arg);
         final Expression target = n.getTarget();
         if (target instanceof NameExpr) {
