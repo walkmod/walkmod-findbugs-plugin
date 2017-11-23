@@ -8,44 +8,41 @@ import org.walkmod.javalang.ast.expr.AssignExpr;
 import org.walkmod.javalang.ast.expr.Expression;
 import org.walkmod.javalang.ast.expr.NameExpr;
 import org.walkmod.javalang.ast.expr.UnaryExpr;
+import org.walkmod.javalang.ast.stmt.Statement;
 import org.walkmod.javalang.visitors.VoidVisitorAdapter;
 import org.walkmod.walkers.VisitorContext;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.logging.Logger;
+import java.util.LinkedHashSet;
 
 public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
-    static private Logger logger = Logger.getLogger(AddFinalKeywordVisitor.class.getName());
-
-    private String processingClass = "";
     final private ArrayList<Parameter> parameters = new ArrayList<>();
-    final private HashSet<String> modifiedLocals = new HashSet<>();
+    final private HashSet<String> parameterNames = new HashSet<>();
+    final private HashSet<String> modifiedParameters = new HashSet<>();
+    final private HashSet<Statement> doNotModifyStatements = new LinkedHashSet<>();
 
     @Override
     public void visit(final ClassOrInterfaceDeclaration n, final VisitorContext arg) {
-        processingClass = n.getSymbolName();
         super.visit(n, arg);
     }
 
     @Override
     public void visit(final MethodDeclaration n, final VisitorContext arg) {
+        parameterNames.clear();
         parameters.clear();
-        modifiedLocals.clear();
+        modifiedParameters.clear();
 
         super.visit(n, arg);
 
         for (Parameter param : parameters) {
-            if (!modifiedLocals.contains(param.getSymbolName())) {
+            if (!modifiedParameters.contains(param.getSymbolName())) {
                 param.setModifiers(param.getModifiers() | ModifierSet.FINAL);
-            } else {
-                logger.warning("" +
-                        "Parameter '" + param.getSymbolName() + "'"
-                        + " in method '" + n.getSymbolName() + "'"
-                        + " and class '" + processingClass + "'" +
-                        " is being modified inside the function!"
-                );
             }
+        }
+
+        for (Statement entry : this.doNotModifyStatements) {
+            System.out.println("@TODO: Do not modify parameters! " + entry);
         }
     }
 
@@ -53,6 +50,7 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
     public void visit(final Parameter param, final VisitorContext arg) {
         super.visit(param, arg);
         parameters.add(param);
+        parameterNames.add(param.getSymbolName());
     }
 
     @Override
@@ -60,12 +58,13 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
         super.visit(n, arg);
         final Expression target = n.getTarget();
         if (target instanceof NameExpr) {
-            modifiedLocals.add(((NameExpr) target).getName());
+            checkNameExpr((NameExpr) target);
         }
     }
 
     @Override
-    public void visit(UnaryExpr n, VisitorContext arg) {
+    public void visit(final UnaryExpr n, final VisitorContext arg) {
+        NodeUtils.getAncestorOfType(n, Statement.class);
         super.visit(n, arg);
         switch (n.getOperator()) {
             case preIncrement:
@@ -74,9 +73,17 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
             case posDecrement:
                 final Expression expr = n.getExpr();
                 if (expr instanceof NameExpr) {
-                    modifiedLocals.add(((NameExpr) expr).getName());
+                    checkNameExpr((NameExpr) expr);
                 }
                 break;
+        }
+    }
+
+    private void checkNameExpr(NameExpr expr) {
+        String name = expr.getName();
+        if (parameterNames.contains(name)) {
+            doNotModifyStatements.add(NodeUtils.getAncestorOfType(expr, Statement.class));
+            modifiedParameters.add(name);
         }
     }
 }
