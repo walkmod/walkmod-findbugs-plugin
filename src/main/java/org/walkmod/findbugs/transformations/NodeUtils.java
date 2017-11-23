@@ -24,7 +24,7 @@ public class NodeUtils {
         return null;
     }
 
-    static public void addComment(@NotNull final CompilationUnit cu, @NotNull  final String comment, final int line) {
+    static public void addComment(@NotNull final CompilationUnit cu, @NotNull final String comment, final int line) {
         List<Comment> comments = cu.getComments();
         if (comments == null) {
             comments = new ArrayList<>();
