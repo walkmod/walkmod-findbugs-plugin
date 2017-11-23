@@ -2,13 +2,14 @@ package org.walkmod.findbugs.transformations;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import org.junit.Assert;
 import org.junit.Test;
 import org.walkmod.javalang.ASTManager;
 import org.walkmod.javalang.ast.CompilationUnit;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AddFinalKeywordVisitorTest {
     @Test
@@ -27,7 +28,7 @@ public class AddFinalKeywordVisitorTest {
         final CompilationUnit cu = ASTManager.parse(getResourceFile(input));
         final AddFinalKeywordVisitor visitor = new AddFinalKeywordVisitor();
         visitor.visit(cu, null);
-        Assert.assertEquals(getResourceString(expected), cu.toString());
+        assertThat(cu.toString()).isEqualTo(getResourceString(expected));
     }
 
     static private File getResourceFile(String fileReference) {
