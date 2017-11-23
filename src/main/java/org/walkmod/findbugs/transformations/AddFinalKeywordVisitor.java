@@ -32,6 +32,7 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
         parameterNames.clear();
         parameters.clear();
         modifiedParameters.clear();
+        doNotModifyStatements.clear();
 
         super.visit(n, arg);
 
