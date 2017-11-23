@@ -7,6 +7,7 @@ import org.walkmod.javalang.ast.body.Parameter;
 import org.walkmod.javalang.ast.expr.AssignExpr;
 import org.walkmod.javalang.ast.expr.Expression;
 import org.walkmod.javalang.ast.expr.NameExpr;
+import org.walkmod.javalang.ast.expr.UnaryExpr;
 import org.walkmod.javalang.visitors.VoidVisitorAdapter;
 import org.walkmod.walkers.VisitorContext;
 
@@ -60,6 +61,22 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
         final Expression target = n.getTarget();
         if (target instanceof NameExpr) {
             modifiedLocals.add(((NameExpr) target).getName());
+        }
+    }
+
+    @Override
+    public void visit(UnaryExpr n, VisitorContext arg) {
+        super.visit(n, arg);
+        switch (n.getOperator()) {
+            case preIncrement:
+            case preDecrement:
+            case posIncrement:
+            case posDecrement:
+                final Expression expr = n.getExpr();
+                if (expr instanceof NameExpr) {
+                    modifiedLocals.add(((NameExpr) expr).getName());
+                }
+                break;
         }
     }
 }
