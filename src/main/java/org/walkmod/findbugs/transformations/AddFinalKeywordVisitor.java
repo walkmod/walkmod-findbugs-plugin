@@ -69,7 +69,6 @@ public class AddFinalKeywordVisitor extends VoidVisitorAdapter<VisitorContext> {
 
     @Override
     public void visit(final UnaryExpr n, final VisitorContext arg) {
-        NodeUtils.getAncestorOfType(n, Statement.class);
         super.visit(n, arg);
         switch (n.getOperator()) {
             case preIncrement:
