@@ -1,0 +1,7 @@
+class Demo {
+    public static void demo(String a, int b, int c) {
+        for (b = 0; b < c; b++) {
+            a += "" + b;
+        }
+    }
+}

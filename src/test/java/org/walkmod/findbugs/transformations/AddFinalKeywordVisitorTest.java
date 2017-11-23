@@ -13,9 +13,17 @@ import java.io.IOException;
 public class AddFinalKeywordVisitorTest {
     @Test
     public void shouldAddFinalKeywordToParameters() throws Exception {
-        final String base = "final-parameters/without-final";
-        final String input = base + "/input";
-        final String expected = base + "/expected";
+        testCase("final-parameters/without-final");
+    }
+
+    @Test
+    public void shouldNotAddFinalKeywordToParametersIfModifiedInside() throws Exception {
+        testCase("final-parameters/modified");
+    }
+
+    static private void testCase(String folder) throws Exception {
+        final String input = folder + "/input";
+        final String expected = folder + "/expected";
         final CompilationUnit cu = ASTManager.parse(getResourceFile(input));
         final AddFinalKeywordVisitor visitor = new AddFinalKeywordVisitor();
         visitor.visit(cu, null);
