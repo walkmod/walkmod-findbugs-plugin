@@ -9,9 +9,9 @@ import org.walkmod.javalang.ast.expr.NameExpr;
 import org.walkmod.javalang.visitors.VoidVisitorAdapter;
 import org.walkmod.walkers.VisitorContext;
 
+import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.collect.ImmutableList.of;
 import static org.walkmod.findbugs.transformations.NotNullTransformation.ANNOTATION_NAME;
 import static org.walkmod.findbugs.transformations.NotNullTransformation.PACKAGE_NAME;
 
@@ -29,7 +29,7 @@ public class ExistingPackageInfoVisitor extends VoidVisitorAdapter<VisitorContex
         annotations.add(createAnnotationExpression());
       }
     } else {
-      packageDeclaration.setAnnotations(of(
+      packageDeclaration.setAnnotations(Arrays.asList(
           createAnnotationExpression()
       ));
     }
@@ -48,10 +48,11 @@ public class ExistingPackageInfoVisitor extends VoidVisitorAdapter<VisitorContex
             .map(NameExpr::toString)
             .anyMatch(name -> name.equals(PACKAGE_NAME + ANNOTATION_NAME));
         if (! hasImport) {
+          System.out.printf("------ Added imports to " + compilationUnit.getFileName());
           imports.add(createImportExpression());
         }
       } else {
-        compilationUnit.setImports(of(createImportExpression()));
+        compilationUnit.setImports(Arrays.asList(createImportExpression()));
       }
     }
   }

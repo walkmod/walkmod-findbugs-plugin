@@ -1,13 +1,12 @@
 package org.walkmod.findbugs.transformations;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import org.junit.Test;
 import org.walkmod.javalang.ASTManager;
 import org.walkmod.javalang.ast.CompilationUnit;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,6 +36,7 @@ public class AddFinalKeywordVisitorTest {
     }
 
     static private String getResourceString(final String fileReference) throws IOException {
-        return Files.asCharSource(getResourceFile(fileReference), Charsets.UTF_8).read();
+        final File resourceFile = getResourceFile(fileReference);
+        return new String(Files.readAllBytes(resourceFile.toPath()));
     }
 }
