@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 @RequiresSemanticAnalysis
 public class NotNullTransformation extends VoidVisitorAdapter<VisitorContext> {
+    private static final String ANNOTATION_NAME = "NotNullByDefault";
+    private static final String PACKAGE_NAME = "com.schibsted.engprod.commons.annotations.";
 
   static final String ANNOTATION_NAME = "NotNullByDefault";
   static final String PACKAGE_NAME = "hello.";
@@ -38,7 +40,6 @@ public class NotNullTransformation extends VoidVisitorAdapter<VisitorContext> {
         processedPackages.add(clazz.getPackage().getName());
       }
     }
-  }
 
   private CompilationUnit createPackageInfoCompilationUnit(final CompilationUnit siblingCompilationUnit) {
     final CompilationUnit compilationUnit = new CompilationUnit();

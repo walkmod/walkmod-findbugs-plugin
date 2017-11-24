@@ -1,0 +1,12 @@
+class Demo {
+    public static void demo(String a, int b, final int c, int d) {
+        // Are we keeping comments?
+        // @TODO: Do not modify parameters!
+        for (b = 0; b < c; b++) {
+            // @TODO: Do not modify parameters!
+            a += "" + b;
+            // @TODO: Do not modify parameters!
+            d++;
+        }
+    }
+}
